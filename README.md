@@ -35,3 +35,20 @@ Instead of a standard chatbot, this workflow ingests customer emails, drafts bil
 ```bash
 git clone [https://github.com/tufflord11111/boldr-intelligence-engine.git](https://github.com/tufflord11111/boldr-intelligence-engine.git)
 cd boldr-intelligence-engine
+2. Install dependencies:
+
+Bash
+py -m pip install -r requirements.txt
+3. Set your API Key (Windows PowerShell):
+
+Bash
+$env:QWEN_API_KEY = "your-qwen-key-here"
+4. Run the core pipeline:
+
+Bash
+py main.py --full
+5. Launch the Approval UI:
+
+Bash
+py -m approval_ui.app
+Access the dashboard at: http://localhost:5000
