@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Boldr Intelligence Hub</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#F7F5F0;
+  --s1:#FFFFFF;
+  --s2:#F4F1EC;
+  --bd:#E5DDD5;
+  --bd2:#D4C9BC;
+  --tx:#1A1A2E;
+  --tx2:#5A5470;
+  --tx3:#9893A8;
+  --royal:#1E3A8A;
+  --royal2:#2563EB;
+  --royal-l:#EEF2FF;
+  --royal-m:#BFDBFE;
+  --teal:#0F766E;
+  --tl:#F0FDFA;
+  --warm:#C2410C;
+  --wl:#FFF7ED;
+  --grn:#15803D;
+  --gl:#F0FDF4;
+  --amb:#B45309;
+  --al:#FFFBEB;
+  --pur:#6D28D9;
+  --pl:#F5F3FF;
+  --r:14px;--rs:10px;
+  --sh:0 1px 3px rgba(0,0,0,0.06),0 4px 12px rgba(0,0,0,0.04);
+  --sh2:0 4px 16px rgba(30,58,138,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;font-size:14px;display:flex;min-height:100vh;line-height:1.5}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:220px;background:var(--s1);min-height:100vh;
+  display:flex;flex-direction:column;
+  position:fixed;left:0;top:0;z-index:100;
+  border-right:1px solid var(--bd);
+}
+.sidebar-brand{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;
+}
+.brand-icon{
+  width:32px;height:32px;
+  background:var(--royal);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.brand-icon i{color:#fff;font-size:14px}
+.brand-name{font-size:13px;font-weight:600;color:var(--tx);letter-spacing:-.2px}
+.brand-sub{font-size:10px;color:var(--tx3);margin-top:1px}
+
+.nav-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);padding:16px 20px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;color:var(--tx2);
+  cursor:pointer;border:none;background:none;
+  width:100%;text-align:left;font-size:13px;
+  position:relative;transition:all .15s;
+  border-left:2px solid transparent;
+}
+.nav-item i{width:16px;font-size:14px;color:var(--tx3);transition:color .15s}
+.nav-item:hover{color:var(--tx);background:var(--s2)}
+.nav-item:hover i{color:var(--tx2)}
+.nav-item.active{color:var(--royal);background:var(--royal-l);border-left-color:var(--royal);font-weight:500}
+.nav-item.active i{color:var(--royal)}
+.nbadge{
+  margin-left:auto;background:var(--royal);color:#fff;
+  font-size:10px;font-weight:600;min-width:18px;height:18px;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;
+}
+.nav-item.active .nbadge{background:var(--royal2)}
+.nav-live{border-top:1px solid var(--bd);margin-top:auto}
+.nav-live .nav-item{color:var(--royal2);font-weight:500}
+.nav-live .nav-item i{color:var(--royal2)}
+.nav-live .nav-item.active{background:var(--royal);color:#fff}
+.nav-live .nav-item.active i{color:#fff}
+
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--bd);margin-top:0}
+.footer-model{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--tx3);padding:4px 0}
+.footer-model i{width:14px;font-size:12px}
+.footer-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── Main ── */
+.main{margin-left:220px;flex:1;padding:24px 28px;max-width:1400px}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.hdr-left h1{font-size:20px;font-weight:600;color:var(--tx);letter-spacing:-.3px}
+.hdr-left p{font-size:12px;color:var(--tx3);margin-top:2px}
+.status-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s1);border:1px solid var(--bd);
+  border-radius:24px;padding:7px 16px;
+  font-size:12px;color:var(--tx2);box-shadow:var(--sh);
+}
+
+/* ── Hero cards ── */
+.hero-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:14px;margin-bottom:20px}
+.hcard{
+  background:var(--s1);border-radius:var(--r);padding:20px;
+  box-shadow:var(--sh);border:1px solid var(--bd);
+  animation:fadeUp .4s ease both;
+}
+.hcard.royal{
+  background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 100%);
+  border:none;box-shadow:var(--sh2);
+}
+.hcard.royal *{color:#fff!important}
+.hcard.royal .muted{color:rgba(255,255,255,.65)!important}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.hcard:nth-child(2){animation-delay:.06s}
+.hcard:nth-child(3){animation-delay:.12s}
+.hcard:nth-child(4){animation-delay:.18s}
+.hlabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.6);margin-bottom:8px}
+.hnum{font-size:48px;font-weight:700;line-height:1;letter-spacing:-2px;margin-bottom:4px;color:#fff}
+.hmini{display:flex;gap:22px;margin-top:14px}
+.hmini-item>div:first-child{font-size:19px;font-weight:600;color:#fff}
+.hmini-item>div:last-child{font-size:11px;color:rgba(255,255,255,.6)}
+.stat-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;margin-bottom:12px;
+}
+.si-blue{background:var(--royal-l);color:var(--royal2)}
+.si-orange{background:var(--wl);color:var(--warm)}
+.si-green{background:var(--gl);color:var(--grn)}
+.si-purple{background:var(--pl);color:var(--pur)}
+.sbig{font-size:40px;font-weight:700;line-height:1;letter-spacing:-1.5px}
+.slbl{font-size:12px;color:var(--tx2);margin-top:4px}
+
+/* ── Content grid ── */
+.cgrid{display:grid;grid-template-columns:1fr 290px;gap:18px}
+.panel{display:none;animation:fadeIn .25s ease}.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Ticket cards ── */
+.tc{
+  background:var(--s1);border-radius:var(--rs);
+  border:1px solid var(--bd);margin-bottom:10px;
+  overflow:hidden;transition:all .18s;
+  animation:fadeUp .3s ease both;
+}
+.tc:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.tc.sig{border-left:3px solid var(--warm)}
+.thead{display:flex;align-items:flex-start;gap:8px;padding:12px 16px 8px}
+.tid{font-family:'SF Mono','Fira Mono',monospace;font-size:10px;color:var(--tx3);background:var(--s2);padding:2px 7px;border-radius:5px;white-space:nowrap;margin-top:1px;letter-spacing:.3px}
+.tsub{font-size:13px;font-weight:500;flex:1;line-height:1.45;color:var(--tx)}
+.tbody{padding:0 16px 12px}
+.tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-right:4px;margin-bottom:4px}
+.t-blue{background:var(--royal-l);color:var(--royal)}
+.t-orange{background:var(--wl);color:var(--warm)}
+.t-purple{background:var(--pl);color:var(--pur)}
+.t-green{background:var(--gl);color:var(--grn)}
+.t-red{background:#FEF2F2;color:#DC2626}
+.t-gray{background:var(--s2);color:var(--tx2);border:1px solid var(--bd)}
+.t-amber{background:var(--al);color:var(--amb)}
+.fl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin:10px 0 4px;display:flex;align-items:center;gap:5px}
+.fl i{font-size:11px}
+.dbox{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--tx)}
+.mbox{background:var(--wl);border:1px solid #FED7AA;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400E;line-height:1.6}
+.gbox{background:var(--al);border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;font-size:12px;color:#78350F;line-height:1.6}
+.arow{display:flex;gap:8px;padding:10px 16px;background:var(--s2);border-top:1px solid var(--bd);align-items:center}
+.btn{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-approve{background:var(--royal);color:#fff}.btn-approve:hover{background:#1730A0;box-shadow:0 4px 12px rgba(30,58,138,.25)}
+.btn-reject{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}.btn-reject:hover{background:#FEE2E2}
+.status-ok{color:var(--grn);font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px}
+.status-no{color:#DC2626;font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px}
+textarea{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:11px;color:var(--tx);font-size:13px;resize:vertical;min-height:72px;font-family:inherit;margin-top:5px;outline:none;transition:all .2s}
+textarea:focus{border-color:var(--royal2);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.resolve-btn{background:var(--royal);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;margin-top:7px;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.resolve-btn:hover{background:#1730A0}
+.err-note{font-size:12px;color:var(--tx2);font-style:italic;padding:10px 0}
+
+/* ── KB ── */
+.kb-card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:16px;margin-bottom:10px;border-left:3px solid var(--royal);animation:fadeUp .3s ease both}
+.kb-q{font-size:15px;font-weight:500;margin-bottom:7px;color:var(--tx)}
+.kb-a{background:var(--s2);border-radius:8px;padding:11px;font-size:13px;line-height:1.7;margin-bottom:9px;color:var(--tx)}
+
+/* ── Themes ── */
+.insight-card{background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 100%);border-radius:var(--rs);padding:14px;margin-bottom:14px;color:#fff;box-shadow:var(--sh2)}
+.insight-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.55);margin-bottom:6px}
+.insight-text{font-size:13px;line-height:1.6}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.tcard{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rs);padding:14px;transition:all .18s;animation:fadeUp .3s ease both;cursor:default}
+.tcard:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.tcard-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:6px}
+.tcard-count{font-size:30px;font-weight:700;color:var(--royal);letter-spacing:-1px}
+.tcard-unit{font-size:11px;color:var(--tx3)}
+.signal-bar{height:3px;border-radius:2px;margin-top:9px}
+.sig-high{background:var(--grn)}.sig-med{background:var(--amb)}.sig-low{background:var(--bd)}
+.opp-chip{margin-top:9px;font-size:11px;color:var(--royal);background:var(--royal-l);border-radius:7px;padding:7px 9px;line-height:1.5;display:flex;align-items:flex-start;gap:5px}
+.opp-chip i{font-size:11px;margin-top:1px;flex-shrink:0}
+
+/* ── Brief ── */
+.brief-wrap{background:var(--s1);border-radius:var(--rs);padding:24px;border:1px solid var(--bd)}
+.brief-dl{background:var(--s1);color:var(--tx2);border:1px solid var(--bd);border-radius:8px;padding:6px 13px;font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.brief-dl:hover{background:var(--s2)}
+#brief-content{font-size:14px;line-height:1.85;color:var(--tx)}
+#brief-content h1{font-size:18px;font-weight:600;margin:0 0 10px;letter-spacing:-.3px}
+#brief-content h2{font-size:14px;font-weight:600;margin:20px 0 7px;color:var(--royal);border-bottom:1px solid var(--bd);padding-bottom:4px}
+#brief-content h3{font-size:13px;font-weight:600;margin:12px 0 4px}
+#brief-content table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+#brief-content th{background:var(--s2);padding:7px 9px;text-align:left;font-weight:500;border:1px solid var(--bd)}
+#brief-content td{padding:6px 9px;border:1px solid var(--bd)}
+#brief-content ul{padding-left:18px}#brief-content li{margin-bottom:4px}
+
+/* ── Right sidebar ── */
+.rsp{display:flex;flex-direction:column;gap:13px}
+.rsc{background:var(--s1);border-radius:var(--rs);padding:16px;border:1px solid var(--bd);box-shadow:var(--sh);animation:fadeUp .4s ease both}
+.rsc-title{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:12px;letter-spacing:-.1px}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd)}
+.metric-row:last-child{border-bottom:none}
+.metric-label{font-size:12px;color:var(--tx2)}
+.metric-val{font-size:18px;font-weight:700}
+.prog-bar{height:4px;background:var(--bd);border-radius:2px;margin-top:3px;overflow:hidden}
+.prog-fill{height:4px;border-radius:2px;animation:growBar 1.2s ease both}
+@keyframes growBar{from{width:0!important}to{}}
+.stack-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.stack-row:last-child{border-bottom:none}
+.stack-label{color:var(--tx2);display:flex;align-items:center;gap:7px}
+.stack-label i{width:14px;font-size:12px;color:var(--tx3)}
+.rai-row{font-size:12px;color:var(--tx2);padding:5px 0;display:flex;align-items:center;gap:7px}
+.rai-row i{color:var(--grn);font-size:12px;width:14px}
+.cost-card-inner{background:linear-gradient(135deg,#1E3A8A,#1D4ED8);border-radius:var(--rs);padding:16px;box-shadow:var(--sh2)}
+.cost-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.55);margin-bottom:4px}
+.cost-big{font-size:28px;font-weight:700;color:#fff;letter-spacing:-1px}
+.cost-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+.cost-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.12)}
+.cost-stat-val{font-size:13px;font-weight:600;color:#fff}
+.cost-stat-lbl{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+
+/* ── Live panel ── */
+.live-panel{background:var(--s1);border-radius:var(--rs);border:1px solid var(--bd);padding:22px}
+.live-title{font-size:18px;font-weight:600;color:var(--tx);margin-bottom:3px;letter-spacing:-.3px}
+.live-sub{font-size:13px;color:var(--tx2);margin-bottom:18px}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;margin-bottom:12px}
+.qp{background:var(--royal-l);color:var(--royal);border:1px solid var(--royal-m);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.qp:hover{background:var(--royal-m)}
+.live-input{width:100%;background:var(--s2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:13px;font-size:14px;color:var(--tx);outline:none;resize:none;min-height:80px;font-family:inherit;transition:all .2s;line-height:1.6}
+.live-input:focus{border-color:var(--royal2);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.live-go{width:100%;background:var(--royal);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-size:14px;font-weight:500;cursor:pointer;margin-top:10px;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+.live-go:hover{background:#1730A0;box-shadow:0 6px 20px rgba(30,58,138,.25)}
+.live-go:disabled{background:var(--bd);color:var(--tx3);cursor:not-allowed;box-shadow:none}
+.live-result{margin-top:14px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:16px;font-size:13px;line-height:1.7;display:none}
+.live-result.show{display:block;animation:fadeIn .3s ease}
+.rtag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;margin-bottom:7px;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block;animation:spin 1s linear infinite}
+
+.empty{text-align:center;padding:60px 20px;color:var(--tx3);animation:fadeIn .4s ease}
+.empty i{font-size:36px;margin-bottom:12px;display:block;color:var(--bd2)}
+.empty p{font-size:14px}
+form{display:inline}
+.chart-wrap{background:var(--s1);border-radius:var(--rs);border:1px solid var(--bd);padding:16px;margin-bottom:13px;box-shadow:var(--sh)}
+.chart-title{font-size:12px;font-weight:600;color:var(--tx);margin-bottom:12px;letter-spacing:-.1px}
+.donut-wrap{display:flex;align-items:center;gap:12px}
+.donut-legend{flex:1;font-size:11px}
+.dleg{display:flex;align-items:center;gap:6px;color:var(--tx2);margin-bottom:5px}
+.dleg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dleg strong{margin-left:auto;color:var(--tx)}
+</style>
+</head>
+<body>
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+    <div>
+      <div class="brand-name">Boldr Intel Hub</div>
+      <div class="brand-sub">ECSG2026 · Revenue Rocket</div>
+    </div>
+  </div>
+
+  <div class="nav-section">Approval Queue</div>
+  <button class="nav-item active" onclick="go('replies',this)">
+    <i class="fa-regular fa-envelope"></i> Reply Drafts
+    {% set pr=tickets|selectattr('action','equalto','draft_reply')|selectattr('status','equalto','pending_human_approval')|list %}
+    {% if pr %}<span class="nbadge">{{pr|length}}</span>{% endif %}
+  </button>
+  <button class="nav-item" onclick="go('gaps',this)">
+    <i class="fa-solid fa-triangle-exclamation"></i> Knowledge Gaps
+    {% set gp=tickets|selectattr('action','equalto','flag_gap')|list %}
+    {% if gp %}<span class="nbadge">{{gp|length}}</span>{% endif %}
+  </button>
+  <button class="nav-item" onclick="go('kb',this)">
+    <i class="fa-regular fa-file-lines"></i> KB Drafts
+    {% if kb_entries %}<span class="nbadge">{{kb_entries|length}}</span>{% endif %}
+  </button>
+
+  <div class="nav-section">Intelligence</div>
+  <button class="nav-item" onclick="go('themes',this)">
+    <i class="fa-solid fa-chart-pie"></i> Theme Clusters
+  </button>
+  <button class="nav-item" onclick="go('brief',this)">
+    <i class="fa-regular fa-newspaper"></i> Marketing Brief
+  </button>
+
+  <div class="nav-live">
+    <button class="nav-item" onclick="go('live',this)">
+      <i class="fa-solid fa-bolt"></i> Try It Live
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="footer-model"><span class="footer-dot"></span><span style="color:var(--tx);font-weight:500">Active models</span></div>
+    <div class="footer-model"><i class="fa-solid fa-brain" style="color:var(--royal2)"></i> Claude Haiku</div>
+    <div class="footer-model"><i class="fa-solid fa-globe" style="color:var(--pur)"></i> Qwen Plus</div>
+    <div class="footer-model"><i class="fa-solid fa-magnifying-glass" style="color:var(--grn)"></i> FAISS Local</div>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>Customer Intelligence Hub</h1>
+      <p>Boldr Supply Co &nbsp;·&nbsp; ECSG2026 AI Workflow Competition &nbsp;·&nbsp; Revenue Rocket Track</p>
+    </div>
+    <div class="status-pill">
+      <span class="footer-dot"></span>
+      AI Engine Active &nbsp;·&nbsp; Claude + Qwen
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-row">
+    <div class="hcard royal">
+      <div class="hlabel">Intelligence overview</div>
+      <div class="hnum">{{tickets|length}}</div>
+      <div class="muted" style="font-size:13px">Tickets processed this sprint</div>
+      <div class="hmini">
+        <div class="hmini-item"><div>{{tickets|selectattr('action','equalto','draft_reply')|list|length}}</div><div>Replies drafted</div></div>
+        <div class="hmini-item"><div>{{tickets|selectattr('marketing_signal','equalto',true)|list|length}}</div><div>Mktg signals</div></div>
+        <div class="hmini-item"><div>0</div><div>Errors</div></div>
+      </div>
+    </div>
+    <div class="hcard" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div class="stat-icon si-orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div><div class="sbig" style="color:var(--warm)">{{tickets|selectattr('action','equalto','flag_gap')|list|length}}</div><div class="slbl">Gaps flagged</div></div>
+    </div>
+    <div class="hcard" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div class="stat-icon si-green"><i class="fa-regular fa-file-lines"></i></div>
+      <div><div class="sbig" style="color:var(--grn)">{{kb_entries|length}}</div><div class="slbl">KB entries pending</div></div>
+    </div>
+    <div class="hcard" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div class="stat-icon si-blue"><i class="fa-solid fa-signal"></i></div>
+      <div><div class="sbig" style="color:var(--royal)">{{tickets|selectattr('marketing_signal','equalto',true)|list|length}}</div><div class="slbl">Marketing signals</div></div>
+    </div>
+  </div>
+
+  <div class="cgrid">
+    <div>
+      <!-- Replies -->
+      <div id="p-replies" class="panel active">
+        {% set rt=tickets|selectattr('action','equalto','draft_reply')|list %}
+        {% if rt %}{% for t in rt %}
+        <div class="tc {{'sig' if t.marketing_signal else ''}}">
+          <div class="thead">
+            <span class="tid">{{t.ticket_id}}</span>
+            <span class="tsub">{{t.intent_summary or 'No summary'}}</span>
+            <span class="tag {{'t-green' if t.status=='approved' else 't-red' if t.status=='rejected' else 't-amber'}}">{{(t.status or 'pending')|replace('_',' ')|title}}</span>
+          </div>
+          <div class="tbody">
+            <div style="margin-bottom:8px">
+              <span class="tag t-blue">{{(t.question_type or '')|replace('_',' ')|title}}</span>
+              <span class="tag t-purple">{{(t.buyer_persona or '')|replace('_',' ')|title}}</span>
+              <span class="tag t-gray">{{t.confidence or 'high'}} confidence</span>
+              {% if t.marketing_signal %}<span class="tag t-orange"><i class="fa-solid fa-signal" style="font-size:10px"></i> Signal</span>{% endif %}
+            </div>
+            {% if t.marketing_note %}
+            <div class="fl"><i class="fa-regular fa-lightbulb"></i> Marketing opportunity</div>
+            <div class="mbox">{{t.marketing_note}}</div>
+            {% endif %}
+            <div class="fl"><i class="fa-solid fa-pen-to-square"></i> AI draft reply</div>
+            {% if t.draft_reply %}
+            <div class="dbox">{{t.draft_reply}}</div>
+            {% else %}
+            <div class="dbox" style="color:var(--tx3);font-style:italic">No draft generated. The Claude reply drafting step requires the API key to be set when running the pipeline. Run: <code style="background:var(--bd);padding:1px 5px;border-radius:4px;font-style:normal">py main.py --full</code> with your API key active.</div>
+            {% endif %}
+          </div>
+          <div class="arow">
+            {% if t.status=='approved' %}<span class="status-ok"><i class="fa-solid fa-circle-check"></i> Approved — queued to send</span>
+            {% elif t.status=='rejected' %}<span class="status-no"><i class="fa-solid fa-circle-xmark"></i> Rejected</span>
+            {% else %}
+            <form method="POST" action="/approve/{{t.ticket_id}}"><button class="btn btn-approve"><i class="fa-solid fa-check"></i> Approve</button></form>
+            <form method="POST" action="/reject/{{t.ticket_id}}"><button class="btn btn-reject">Reject</button></form>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}<div class="empty"><i class="fa-regular fa-envelope-open"></i><p>No reply drafts yet.<br>Run <code>py main.py</code> to process tickets.</p></div>{% endif %}
+      </div>
+
+      <!-- Gaps -->
+      <div id="p-gaps" class="panel">
+        {% set gt=tickets|selectattr('action','equalto','flag_gap')|list %}
+        {% if gt %}{% for t in gt %}
+        <div class="tc {{'sig' if t.marketing_signal else ''}}">
+          <div class="thead">
+            <span class="tid">{{t.ticket_id}}</span>
+            <span class="tsub">{{t.intent_summary or 'Knowledge gap'}}</span>
+            <span class="tag t-amber"><i class="fa-solid fa-triangle-exclamation" style="font-size:9px"></i> Gap</span>
+            {% if t.marketing_signal %}<span class="tag t-orange"><i class="fa-solid fa-signal" style="font-size:9px"></i></span>{% endif %}
+          </div>
+          <div class="tbody">
+            <span class="tag t-purple">{{(t.buyer_persona or '')|replace('_',' ')|title}}</span>
+            <div class="fl"><i class="fa-solid fa-circle-question"></i> What's missing from KB</div>
+            <div class="gbox">{{t.gap_details or 'No details provided.'}}</div>
+            {% if t.marketing_note %}
+            <div class="fl"><i class="fa-regular fa-lightbulb"></i> Opportunity</div>
+            <div class="mbox">{{t.marketing_note}}</div>
+            {% endif %}
+            <div class="fl"><i class="fa-solid fa-wand-magic-sparkles"></i> Resolve — AI auto-drafts the KB entry</div>
+            <form method="POST" action="/resolve_gap/{{t.ticket_id}}" style="display:block">
+              <textarea name="resolution" placeholder="Type the answer here — AI generates a new FAQ entry automatically..."></textarea>
+              <button type="submit" class="resolve-btn"><i class="fa-solid fa-arrow-right"></i> Resolve & Auto-Draft KB Entry</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}<div class="empty"><i class="fa-solid fa-circle-check"></i><p>No gaps flagged.</p></div>{% endif %}
+      </div>
+
+      <!-- KB -->
+      <div id="p-kb" class="panel">
+        {% if kb_entries %}{% for e in kb_entries %}
+        <div class="kb-card">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+            <span class="tag t-blue">New KB Entry</span>
+            <span class="tag t-purple">{{(e.category or 'general')|replace('_',' ')|title}}</span>
+            {% if e.marketing_flag %}<span class="tag t-orange"><i class="fa-solid fa-signal" style="font-size:9px"></i> Marketing</span>{% endif %}
+            <span style="font-size:11px;color:var(--tx3);margin-left:auto;font-family:monospace">{{e.faq_id or 'auto-id'}}</span>
+          </div>
+          <div class="fl"><i class="fa-solid fa-circle-question"></i> Proposed question</div>
+          <div class="kb-q">{{e.question or 'No question'}}</div>
+          <div class="fl"><i class="fa-regular fa-message"></i> Proposed answer</div>
+          <div class="kb-a">{{e.answer or 'No answer.'}}</div>
+          {% if e.marketing_action %}<div class="mbox"><i class="fa-regular fa-lightbulb"></i> {{e.marketing_action}}</div>{% endif %}
+          <div style="font-size:11px;color:var(--tx3);margin-top:8px;display:flex;align-items:center;gap:6px">
+            <i class="fa-solid fa-link" style="font-size:10px"></i> Created from {{e.created_from_ticket}}
+            <span class="tag t-amber" style="margin-left:4px">{{e.status or 'pending'}}</span>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}<div class="empty"><i class="fa-regular fa-file-lines"></i><p>No KB drafts yet.<br>Resolve a gap to generate one.</p></div>{% endif %}
+      </div>
+
+      <!-- Themes -->
+      <div id="p-themes" class="panel">
+        {% if cluster %}
+        <div class="insight-card">
+          <div class="insight-label"><i class="fa-solid fa-star" style="font-size:9px"></i> Top insight this week</div>
+          <div class="insight-text">{{cluster.top_insight or 'Run the pipeline to generate insights.'}}</div>
+        </div>
+        <div class="tgrid">
+        {% for t in cluster.themes or [] %}
+        <div class="tcard">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <div class="tcard-name">{{t.theme_name}}</div>
+            <span class="tag {{'t-green' if t.marketing_signal_strength=='high' else 't-amber' if t.marketing_signal_strength=='medium' else 't-gray'}}" style="font-size:10px">{{(t.marketing_signal_strength or 'low')|upper}}</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:5px">
+            <span class="tcard-count">{{t.ticket_count}}</span><span class="tcard-unit">tickets</span>
+          </div>
+          <div>{% for p in (t.primary_personas or [])[:2] %}<span class="tag t-purple" style="font-size:10px">{{p|replace('_',' ')}}</span>{% endfor %}</div>
+          <div class="signal-bar {{'sig-high' if t.marketing_signal_strength=='high' else 'sig-med' if t.marketing_signal_strength=='medium' else 'sig-low'}}"></div>
+          {% if t.marketing_opportunity %}
+          <div class="opp-chip"><i class="fa-regular fa-lightbulb"></i> {{t.marketing_opportunity[:95]}}{% if t.marketing_opportunity|length > 95 %}…{% endif %}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        </div>
+        {% else %}<div class="empty"><i class="fa-solid fa-chart-pie"></i><p>No cluster data.<br>Run the pipeline first.</p></div>{% endif %}
+      </div>
+
+      <!-- Brief -->
+      <div id="p-brief" class="panel">
+        {% if brief %}
+        <div class="brief-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)">Monthly Intelligence Brief</div>
+            <a href="/download_brief" class="brief-dl"><i class="fa-solid fa-download"></i> Download .md</a>
+          </div>
+          <div id="brief-content"></div>
+        </div>
+        {% else %}<div class="empty"><i class="fa-regular fa-newspaper"></i><p>No brief yet.<br>Run the pipeline first.</p></div>{% endif %}
+      </div>
+
+      <!-- Live -->
+      <div id="p-live" class="panel">
+        <div class="live-panel">
+          <div class="live-title">Try It Live</div>
+          <div class="live-sub">Type any customer question and watch the full AI pipeline process it in real time — intent extraction via Qwen, reply drafting via Claude.</div>
+          <div class="fl"><i class="fa-solid fa-bolt"></i> Quick test prompts</div>
+          <div class="quick-prompts">
+            <button class="qp" onclick="setQ('Is the watch strap BPA-free? I am buying for my daughter.')">BPA-free strap</button>
+            <button class="qp" onclick="setQ('Can you engrave Chinese characters on the caseback?')">Chinese engraving</button>
+            <button class="qp" onclick="setQ('Do you offer carbon-neutral shipping options?')">Carbon shipping</button>
+            <button class="qp" onclick="setQ('How long does engraving take? I need it for a birthday next week.')">Engraving timeline</button>
+            <button class="qp" onclick="setQ('Are your watch straps vegan-friendly?')">Vegan straps</button>
+          </div>
+          <div class="fl"><i class="fa-regular fa-comment"></i> Customer question</div>
+          <textarea class="live-input" id="lq" rows="3" placeholder="Type a customer question here..."></textarea>
+          <button class="live-go" id="lgobtn" onclick="tryLive()">
+            <i class="fa-solid fa-bolt"></i> Process with AI
+          </button>
+          <div class="live-result" id="lres"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <div class="rsp">
+      <div class="chart-wrap">
+        <div class="chart-title">Ticket breakdown</div>
+        <div class="donut-wrap">
+          <canvas id="donutChart" style="max-width:100px;max-height:100px"></canvas>
+          <div class="donut-legend">
+            <div class="dleg"><span class="dleg-dot" style="background:var(--royal)"></span>Replies drafted<strong>{{tickets|selectattr('action','equalto','draft_reply')|list|length}}</strong></div>
+            <div class="dleg"><span class="dleg-dot" style="background:var(--warm)"></span>Gaps flagged<strong>{{tickets|selectattr('action','equalto','flag_gap')|list|length}}</strong></div>
+            <div class="dleg"><span class="dleg-dot" style="background:var(--amb)"></span>Mktg signals<strong>{{tickets|selectattr('marketing_signal','equalto',true)|list|length}}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      {% if cluster and cluster.themes %}
+      <div class="chart-wrap">
+        <div class="chart-title">Themes by volume</div>
+        <canvas id="barChart"></canvas>
+      </div>
+      {% endif %}
+
+      <div class="rsc">
+        <div class="rsc-title">Pipeline breakdown</div>
+        {% set total=tickets|length %}
+        {% set replies=tickets|selectattr('action','equalto','draft_reply')|list|length %}
+        {% set gaps2=tickets|selectattr('action','equalto','flag_gap')|list|length %}
+        <div class="metric-row"><span class="metric-label">Reply drafts</span><span class="metric-val" style="color:var(--royal)">{{replies}}</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:{{'%d'|format((replies/total*100)|int if total else 0)}}%;background:var(--royal)"></div></div>
+        <div class="metric-row"><span class="metric-label">Gaps flagged</span><span class="metric-val" style="color:var(--warm)">{{gaps2}}</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:{{'%d'|format((gaps2/total*100)|int if total else 0)}}%;background:var(--warm)"></div></div>
+        <div class="metric-row"><span class="metric-label">Marketing signals</span><span class="metric-val" style="color:var(--grn)">{{tickets|selectattr('marketing_signal','equalto',true)|list|length}}</span></div>
+        <div class="metric-row" style="border:none"><span class="metric-label">KB entries drafted</span><span class="metric-val" style="color:var(--pur)">{{kb_entries|length}}</span></div>
+      </div>
+
+      <div class="rsc">
+        <div class="rsc-title">Responsible AI</div>
+        <div class="rai-row"><i class="fa-solid fa-circle-check"></i> Human approval before sending</div>
+        <div class="rai-row"><i class="fa-solid fa-circle-check"></i> Never hallucinates</div>
+        <div class="rai-row"><i class="fa-solid fa-circle-check"></i> KB self-improves automatically</div>
+        <div class="rai-row"><i class="fa-solid fa-circle-check"></i> No PII stored externally</div>
+        <div class="rai-row"><i class="fa-solid fa-circle-check"></i> CS team fallback on failure</div>
+      </div>
+
+      <div class="rsc" style="padding:0;overflow:hidden">
+        <div class="cost-card-inner">
+          <div class="cost-label">Cost per ticket</div>
+          <div class="cost-big">SGD 0.08</div>
+          <div class="cost-sub">vs SGD 2.39 manually processed</div>
+          <div class="cost-stats">
+            <div><div class="cost-stat-val">97%</div><div class="cost-stat-lbl">Cost reduction</div></div>
+            <div><div class="cost-stat-val">SGD 8,125</div><div class="cost-stat-lbl">Annual saving</div></div>
+            <div><div class="cost-stat-val">&lt; 1 wk</div><div class="cost-stat-lbl">Payback</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const briefRaw = {{ brief|tojson|safe if brief else 'null' }};
+if (briefRaw && window.marked) {
+  const el = document.getElementById('brief-content');
+  if (el) el.innerHTML = marked.parse(briefRaw);
+}
+
+function go(name, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function setQ(q) {
+  document.getElementById('lq').value = q;
+  document.querySelector('.nav-live .nav-item').click();
+}
+
+async function tryLive() {
+  const q = document.getElementById('lq').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('lgobtn');
+  const res = document.getElementById('lres');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"><i class="fa-solid fa-circle-notch"></i></span> Processing...';
+  res.className = 'live-result show';
+  res.innerHTML = '<span style="color:var(--tx3)">Extracting intent with Qwen... drafting reply with Claude...</span>';
+  try {
+    const r = await fetch('/api/process_live', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({question:q})});
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    let h = '';
+    h += `<span class="rtag t-blue">${(d.question_type||'').replace(/_/g,' ')}</span>`;
+    h += `<span class="rtag t-purple">${(d.buyer_persona||'').replace(/_/g,' ')}</span>`;
+    if (d.marketing_signal) h += `<span class="rtag t-orange"><i class="fa-solid fa-signal" style="font-size:9px"></i> Marketing signal</span>`;
+    h += `<span class="rtag ${d.kb_match ? 't-green' : 't-amber'}">${d.kb_match ? '<i class="fa-solid fa-check" style="font-size:9px"></i> KB match' : '<i class="fa-solid fa-triangle-exclamation" style="font-size:9px"></i> Knowledge gap'}</span>`;
+    if (d.draft_reply) {
+      h += `<div class="fl" style="margin-top:10px"><i class="fa-solid fa-pen-to-square"></i> AI draft reply</div>`;
+      h += `<div style="font-size:13px;line-height:1.7;color:var(--tx);margin-top:4px">${d.draft_reply}</div>`;
+    } else if (d.gap_details) {
+      h += `<div class="fl" style="margin-top:10px"><i class="fa-solid fa-circle-question"></i> Knowledge gap detected</div>`;
+      h += `<div style="font-size:13px;line-height:1.7;color:var(--amb);margin-top:4px">${d.gap_details}</div>`;
+    }
+    if (d.marketing_note) {
+      h += `<div style="margin-top:10px;background:var(--wl);border-radius:8px;padding:10px 12px;font-size:12px;color:#92400E"><i class="fa-regular fa-lightbulb"></i> ${d.marketing_note}</div>`;
+    }
+    res.innerHTML = h;
+  } catch(e) {
+    res.innerHTML = `<span style="color:var(--warm)"><i class="fa-solid fa-circle-exclamation"></i> ${e.message}</span>`;
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Process with AI';
+}
+
+window.addEventListener('load', () => {
+  const replies = {{tickets|selectattr('action','equalto','draft_reply')|list|length}};
+  const gaps = {{tickets|selectattr('action','equalto','flag_gap')|list|length}};
+  const signals = {{tickets|selectattr('marketing_signal','equalto',true)|list|length}};
+  const dc = document.getElementById('donutChart');
+  if (dc && window.Chart) {
+    new Chart(dc, {
+      type:'doughnut',
+      data:{datasets:[{data:[replies,gaps,signals],backgroundColor:['#1E3A8A','#C2410C','#B45309'],borderWidth:0,hoverOffset:3}]},
+      options:{cutout:'75%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw} tickets`}}},animation:{animateScale:true,animateRotate:true,duration:800}}
+    });
+  }
+  {% if cluster and cluster.themes %}
+  const bc = document.getElementById('barChart');
+  if (bc && window.Chart) {
+    const themes = {{ cluster.themes|tojson|safe }};
+    const labels = themes.slice(0,6).map(t => t.theme_name.length>26 ? t.theme_name.slice(0,24)+'…' : t.theme_name);
+    const counts = themes.slice(0,6).map(t => t.ticket_count);
+    const colors = themes.slice(0,6).map(t => t.marketing_signal_strength==='high' ? '#1E3A8A' : t.marketing_signal_strength==='medium' ? '#B45309' : '#C8C0B8');
+    new Chart(bc, {
+      type:'bar',
+      data:{labels,datasets:[{data:counts,backgroundColor:colors,borderRadius:4,borderSkipped:false}]},
+      options:{
+        indexAxis:'y',
+        layout:{padding:{left:0}},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              title: ctx => themes[ctx[0].dataIndex]?.theme_name || ctx[0].label,
+              label: c => ` ${c.raw} tickets`
+            }
+          }
+        },
+        scales:{
+          x:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#9893A8'}},
+          y:{grid:{display:false},border:{display:false},ticks:{font:{size:10},color:'#5A5470',maxTicksLimit:8}}
+        },
+        animation:{duration:900,easing:'easeOutQuart'}
+      }
+    });
+  }
+  {% endif %}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+﻿.env
+__pycache__/
+*.pyc
+*.pyo
+data/kb_faiss.index
+outputs/
+*.zip
+.DS_Store

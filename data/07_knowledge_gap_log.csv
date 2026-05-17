@@ -1,0 +1,6 @@
+ticket_id,theme,question,kb_match,escalated_to,marketing_signal,persona,kb_draft_status,gap_details
+TKT-1046,magnetic_field_resistance,Is the movement resistant to magnetic fields? I work near MRI equipment.,false,CS Team,true,niche_buyer,pending,No KB entry exists for magnetic resistance.
+TKT-1065,altitude_performance,Will the watch perform normally at 5000m above sea level?,false,CS Team,false,niche_buyer,pending,No altitude performance data in KB.
+TKT-1028,strap_recycling_programme,Do you have a strap recycling or take-back programme?,false,CS Team,true,sustainability_advocate,pending,No recycling programme exists.
+TKT-1036,vegan_materials,Are all your straps vegan-friendly?,false,CS Team,true,sustainability_advocate,pending,No vegan certification documentation.
+TKT-1013,carbon_neutral_shipping,Do you offer carbon-neutral shipping?,false,CS Team,true,sustainability_advocate,pending,No carbon offset shipping option exists.
