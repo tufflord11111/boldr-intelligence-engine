@@ -1,54 +1,46 @@
-# Boldr Intelligence Engine
-**ECSG2026 AI Workflow Competition** | **Track:** Revenue Rocket
-**Builder:** Cayden Chai Ming Yang
+# Boldr Self-Improving Customer Intelligence Engine
+**ECSG2026 AI Workflow Competition — Revenue Rocket Track**
 
-## Overview
-The Boldr Intelligence Engine is a self-improving B2B customer intelligence pipeline designed for SME e-commerce brands. It transforms reactive customer support (where emails are answered and forgotten) into a proactive marketing intelligence engine. 
+**Live Demo:** https://n1njla-boldr-intelligence-engine.hf.space
 
-Instead of a standard chatbot, this workflow ingests customer emails, drafts bilingual replies, flags knowledge gaps without hallucinating, and surfaces hidden marketing insights (like the "BPA-Free" campaign opportunity) directly to the founders.
+## The Problem
+Boldr's 3-person CS team answers 70+ customer emails weekly. Every answer is forgotten. Novel questions about BPA-free materials, sustainability, and product specs disappear into inboxes instead of feeding back into marketing strategy.
 
-## The 7-Step Autonomous Pipeline
-1. **Intent & Persona Extraction:** Analyzes incoming tickets via Qwen.
-2. **Semantic Search:** Queries a local FAISS vector index of PDFs, DOCXs, and SOPs.
-3. **Draft or Flag:**
-   * **If Answerable:** Drafts a reply in the brand's exact tone (English & Mandarin) and queues for human approval.
-   * **If Not Answerable:** Flags a knowledge gap to the CS team to prevent hallucinations.
-4. **Auto-KB Updates:** Once a human resolves the gap, the system auto-drafts a new Knowledge Base entry.
-5. **Theme Clustering:** Groups weekly tickets by business intent.
-6. **Marketing Briefs:** Generates a monthly intelligence report highlighting underserved buyer needs.
-7. **Sentiment Benchmarking:** Cross-validates internal signals with external forum/Reddit data.
+## The 7-Step Workflow
+1. **Ingest** — Customer email received, intent extracted, buyer persona tagged (Qwen Plus)
+2. **KB Search** — FAISS semantic search across FAQ PDF, rate cards, SOP, product docs
+3a. **Draft Reply** — If answerable: reply drafted in Boldr brand voice, queued for human approval
+3b. **Flag Gap** — If not answerable: gap flagged with details, routed to CS team. Never hallucinates.
+4. **KB Update** — When CS resolves gap: AI auto-drafts new FAQ entry for 1-click approval
+5. **Theme Cluster** — Weekly: tickets grouped by theme and buyer persona
+6. **Marketing Brief** — Monthly: "What customers ask that isn't on your product pages"
+7. **BONUS** — External sentiment benchmarking vs WatchUSeek, Reddit, Amazon reviews
 
 ## Tech Stack
-* **AI/LLM:** Qwen Plus (Alibaba Cloud)
-* **Vector Database:** FAISS + sentence-transformers
-* **Backend/Orchestration:** Python
-* **Frontend/Approval UI:** Flask + HTML/CSS
+- **Qwen Plus** (Alibaba Cloud) — All AI processing. $50 sponsor credit.
+- **FAISS** — Local vector KB search, zero hosting cost
+- **Flask** — Human approval UI
+- **Python** — Orchestration
 
-## Business Impact & ROI
-* **Cost Efficiency:** Reduces cost per ticket from SGD 2.39 (manual) to SGD 0.08. 
-* **Time Saved:** 97% reduction in processing time.
-* **Revenue Generation:** Automatically isolates and prioritizes hidden marketing signals to drive new product campaigns.
+## Key Results
+- 70 tickets processed, 0 errors
+- 35 replies drafted, 35 gaps flagged
+- 37 marketing signals detected
+- 6 theme clusters identified
+- SGD 0.08 per ticket vs SGD 2.39 manually (97% reduction)
+- SGD 8,125 annual saving
 
-## Setup and Installation
-
-**1. Clone the repository:**
+## How to Run
 ```bash
-git clone [https://github.com/tufflord11111/boldr-intelligence-engine.git](https://github.com/tufflord11111/boldr-intelligence-engine.git)
-cd boldr-intelligence-engine
-2. Install dependencies:
+pip install -r requirements.txt
+# Set QWEN_API_KEY in .env
+python main.py          # demo: 10 tickets
+python main.py --full   # all 70 tickets
+python -m approval_ui.app  # launch UI at localhost:5000
+```
 
-Bash
-py -m pip install -r requirements.txt
-3. Set your API Key (Windows PowerShell):
-
-Bash
-$env:QWEN_API_KEY = "your-qwen-key-here"
-4. Run the core pipeline:
-
-Bash
-py main.py --full
-5. Launch the Approval UI:
-
-Bash
-py -m approval_ui.app
-Access the dashboard at: http://localhost:5000
+## Responsible AI
+- Human approval required before any reply sends
+- Never hallucinates — gaps flagged, not fabricated
+- KB updates require 1-click human approval
+- No PII stored externally
